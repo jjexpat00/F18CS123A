@@ -1,9 +1,9 @@
 ######################
 # Idea Project files #
 ######################
-.idea
+.idea/
 *.iml
-out
+out/
 ###################
 # Directory Files #
 ###################
