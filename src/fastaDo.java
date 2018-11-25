@@ -3,12 +3,12 @@
 
 import java.io.IOException;
 
-public class fasta {
+public class fastaDo {
 
-    static fastaParse xd = new fastaParse();
+    static Fasta seq = new Fasta();
 
     public static void main(String[] args) throws IOException {
-
-        System.out.println(xd.getFasta());
+        seq.getFasta();
+        System.out.println(seq.printFasta());
     }
 }
