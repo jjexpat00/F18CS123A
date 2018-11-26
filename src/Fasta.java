@@ -1,8 +1,22 @@
+import compbio.data.msa.MsaWS;
+import compbio.data.sequence.Alignment;
+import compbio.data.sequence.ClustalAlignmentUtil;
+import compbio.data.sequence.FastaSequence;
+import compbio.data.sequence.SequenceUtil;
+import compbio.metadata.JobStatus;
+import compbio.metadata.JobSubmissionException;
+import compbio.metadata.ResultNotAvailableException;
+import compbio.ws.client.Services;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import java.util.Scanner;
 
 
 public class Fasta {
@@ -42,6 +56,69 @@ public class Fasta {
         }
         return seq;
 
+    }
+
+    public String getMSA() throws JobSubmissionException, ResultNotAvailableException, InterruptedException, IOException {
+
+        if (Paths.get("f.fast") == null) {
+             return "No FASTA found.";
+        }
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Muscle: mu");
+        System.out.println("Mafft: ma");
+        System.out.println("ClustalO: co");
+        System.out.println("ClustalW: cw");
+        System.out.println("Select MSA option: ");
+        String input = sc.nextLine();
+
+        getMSAHelper(input);
+
+        return "Program exited.";
+
+    }
+
+    private void getMSAHelper(String serviceName) throws IOException, JobSubmissionException, InterruptedException, ResultNotAvailableException {
+
+        String qualifiedServiceName = "http://msa.data.compbio/01/01/2010/";
+        String host = "http://www.compbio.dundee.ac.uk/jabaws";
+
+        // Default service is Clustal Omega
+        Services clustal = Services.ClustalWS;
+
+        if (serviceName.equalsIgnoreCase("co")) {
+            clustal = Services.ClustalOWS;
+            System.out.println("Now aligning with ClustalO...");
+        }
+        else if (serviceName.equalsIgnoreCase("mu")){
+            clustal = Services.MuscleWS;
+            System.out.println("Now aligning with Muscle...");
+        }
+        else if (serviceName.equalsIgnoreCase("cw")){
+            clustal = Services.ClustalWS;
+            System.out.println("Now aligning with ClustalW...");
+        }
+        else if (serviceName.equalsIgnoreCase("ma")){
+            clustal = Services.MafftWS;
+            System.out.println("Now aligning with Mafft...");
+        }
+
+        URL url = new URL(host + "/" + clustal.toString() + "?wsdl");
+        QName qname = new QName(qualifiedServiceName, clustal.toString());
+        Service serv = Service.create(url, qname);
+        MsaWS msaws = serv.getPort(new QName(qualifiedServiceName, clustal + "Port"), MsaWS.class);
+
+        List<FastaSequence> fastalist = SequenceUtil.readFasta(new FileInputStream("f.fasta"));
+        String jobId = msaws.align(fastalist);
+
+        while (msaws.getJobStatus(jobId) != JobStatus.FINISHED) {
+            Thread.sleep(2000); // wait two  seconds, then recheck the status
+            System.out.println("Waiting...");
+        }
+
+        Alignment alignment = msaws.getResult(jobId);
+        ClustalAlignmentUtil.writeClustalAlignment(new FileWriter("out.msa"), alignment);
+        System.out.println("Alignment completed. See \"out.msa\" file.");
     }
 }
 
