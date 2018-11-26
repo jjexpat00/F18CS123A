@@ -28,7 +28,7 @@ public class Fasta {
 
         String base = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/";
         String query = "1516214787,1516461622,1516461432,1516461375,1516461514,1516461413,1516461451,1516461584,1516461704,1516461565,1516461470,1516461394,1516460539,1516461337,1516461546";
-        String apikey = "c0f2110548387a0d1b543dfd4594ddeb7e08";
+        String apikey = APIKey.getKey(); // API Key redacted
 
         URL url = new URL(base + "efetch.fcgi?db=nuccore&id=" + query + "&rettype=fasta&retmode=text&api_key=" + apikey);
         InputStream in = url.openStream();
