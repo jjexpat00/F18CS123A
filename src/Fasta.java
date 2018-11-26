@@ -18,7 +18,6 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Scanner;
 
-
 public class Fasta {
 
     /**
@@ -102,7 +101,8 @@ public class Fasta {
 
         if (serviceName.equalsIgnoreCase("co")) {
             clustal = Services.ClustalOWS;
-            System.out.println("Now aligning with ClustalO...");
+            qualifiedServiceName = "http://msa.data.compbio/01/12/2010/";   // Later implementation on their end requires different service name
+            System.out.println("Now aligning with ClustalOmega...");
         }
         else if (serviceName.equalsIgnoreCase("mu")){
             clustal = Services.MuscleWS;
@@ -130,6 +130,8 @@ public class Fasta {
             System.out.println("Waiting...");
         }
 
+        File file = new File("out.msa");    // Removes older MSA outputs
+        file.delete();
         Alignment alignment = msaws.getResult(jobId);
         ClustalAlignmentUtil.writeClustalAlignment(new FileWriter("out.msa"), alignment);
         System.out.println("Alignment completed. See \"out.msa\" file.");

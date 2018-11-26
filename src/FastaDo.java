@@ -3,7 +3,7 @@ import compbio.metadata.ResultNotAvailableException;
 
 import java.io.IOException;
 
-public class fastaDo {
+public class FastaDo {
 
     static Fasta seq = new Fasta();
 
