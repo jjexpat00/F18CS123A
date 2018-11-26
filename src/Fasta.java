@@ -58,10 +58,18 @@ public class Fasta {
 
     }
 
-    public String getMSA() throws JobSubmissionException, ResultNotAvailableException, InterruptedException, IOException {
+    /**
+     * Method makes call to JABAWS to perform MSA on previously fetched sequence. Gives user a set of options of MSA algorithms.
+     * @throws JobSubmissionException
+     * @throws ResultNotAvailableException
+     * @throws InterruptedException
+     * @throws IOException
+     */
+    public void getMSA() throws JobSubmissionException, ResultNotAvailableException, InterruptedException, IOException {
 
         if (Paths.get("f.fast") == null) {
-             return "No FASTA found.";
+             System.out.println("No FASTA found.");
+             return;
         }
 
         Scanner sc = new Scanner(System.in);
@@ -74,10 +82,16 @@ public class Fasta {
 
         getMSAHelper(input);
 
-        return "Program exited.";
-
     }
 
+    /**
+     * Helper method to send user input selection to JABAWS for MSA. Future implementation will run MSA locally.
+     * @param serviceName User input selection
+     * @throws IOException
+     * @throws JobSubmissionException
+     * @throws InterruptedException
+     * @throws ResultNotAvailableException
+     */
     private void getMSAHelper(String serviceName) throws IOException, JobSubmissionException, InterruptedException, ResultNotAvailableException {
 
         String qualifiedServiceName = "http://msa.data.compbio/01/01/2010/";
@@ -112,7 +126,7 @@ public class Fasta {
         String jobId = msaws.align(fastalist);
 
         while (msaws.getJobStatus(jobId) != JobStatus.FINISHED) {
-            Thread.sleep(2000); // wait two  seconds, then recheck the status
+            Thread.sleep(1000); // wait two  seconds, then recheck the status
             System.out.println("Waiting...");
         }
 
@@ -120,5 +134,6 @@ public class Fasta {
         ClustalAlignmentUtil.writeClustalAlignment(new FileWriter("out.msa"), alignment);
         System.out.println("Alignment completed. See \"out.msa\" file.");
     }
+
 }
 

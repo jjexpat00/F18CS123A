@@ -1,6 +1,5 @@
 import compbio.metadata.JobSubmissionException;
 import compbio.metadata.ResultNotAvailableException;
-import compbio.metadata.WrongParameterException;
 
 import java.io.IOException;
 
