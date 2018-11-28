@@ -126,7 +126,7 @@ public class Fasta {
         String jobId = msaws.align(fastalist);
 
         while (msaws.getJobStatus(jobId) != JobStatus.FINISHED) {
-            Thread.sleep(1000); // wait two  seconds, then recheck the status
+            Thread.sleep(1000);                 // wait one second, then recheck status
             System.out.println("Waiting...");
         }
 

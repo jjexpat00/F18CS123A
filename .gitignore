@@ -4,3 +4,4 @@ out/
 lib/
 *.iml
 APIKey.java
+.jar
