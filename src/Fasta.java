@@ -99,7 +99,7 @@ public class Fasta {
     public String printFasta() throws IOException {
 
         String newline = System.getProperty("line.separator");
-        BufferedReader in = new BufferedReader(new FileReader("f.fasta"));
+        BufferedReader in = new BufferedReader(new FileReader("h1n1.fasta"));
         String seq = "";
         String line;
 
@@ -108,7 +108,6 @@ public class Fasta {
 
         }
         return seq;
-
     }
 
     /**
@@ -121,6 +120,7 @@ public class Fasta {
     public void getMSA() throws JobSubmissionException, ResultNotAvailableException, InterruptedException, IOException {
 
         if (Paths.get("f3.fasta") == null) {
+
              System.out.println("No FASTA found.");
              return;
         }
@@ -134,7 +134,6 @@ public class Fasta {
         String input = sc.nextLine();
 
         getMSAHelper(input);
-
     }
 
     /**
@@ -177,6 +176,7 @@ public class Fasta {
         MsaWS msaws = serv.getPort(new QName(qualifiedServiceName, clustal + "Port"), MsaWS.class);
 
         List<FastaSequence> fastalist = SequenceUtil.readFasta(new FileInputStream("f3.fasta"));
+
         String jobId = msaws.align(fastalist);
 
         while (msaws.getJobStatus(jobId) != JobStatus.FINISHED) {
@@ -184,12 +184,11 @@ public class Fasta {
             System.out.println("Waiting...");
         }
 
-        File file = new File("out.msa");    // Removes older MSA outputs
+        File file = new File("16kalign.msa");    // Removes older MSA outputs
         file.delete();
         Alignment alignment = msaws.getResult(jobId);
         ClustalAlignmentUtil.writeClustalAlignment(new FileWriter("out.msa"), alignment);
         System.out.println("Alignment completed. See \"out.msa\" file.");
     }
-
 }
 
