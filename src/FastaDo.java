@@ -8,10 +8,12 @@ public class FastaDo {
     static Fasta seq = new Fasta();
 
     public static void main(String[] args) throws IOException {
-        seq.getFasta();
+        //seq.get20Fasta();
+    	//seq.get16kFasta();
+    	//seq.printFasta();
         // System.out.println(seq.printFasta());
 
-        try {
+       try {
             seq.getMSA();
         } catch (JobSubmissionException e) {
             e.printStackTrace();
